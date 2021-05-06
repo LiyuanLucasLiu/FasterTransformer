@@ -49,7 +49,7 @@ public:
     check_cuda_error(cublasCreate(&_cublasHandle));
     check_cuda_error(cublasLtCreate(&_cublasLtHandle));
     decoder_params = new DecoderInitParam<T>[_layer_num];
-    const int hidden_dim = _head_num * _head_size;
+    const int hidden_dim = 768; //_head_num * _head_size;
     for (int i = 0; i < _layer_num; ++i) {
       decoder_params[i].self_layernorm.gamma = get_ptr<T>(_weights[0]) + i * hidden_dim;
       decoder_params[i].self_layernorm.beta = get_ptr<T>(_weights[1]) + i * hidden_dim;

@@ -514,7 +514,7 @@ public:
     cuda::MultiHeadInitParam<DataType_> multi_head_init_param;
 
     if (int8_mode_ != 0){
-      int hidden_dim = size_per_head_*head_num_;
+      int hidden_dim = 768;
       layer_idx_ = param_.layer_idx;
       layer_num_ = param_.layer_num;
 

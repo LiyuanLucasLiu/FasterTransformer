@@ -47,7 +47,7 @@ def main():
 
     args = parser.parse_args()
 
-    hidden_dim = args.head_num * args.head_size
+    hidden_dim = 768 #args.head_num * args.head_size
 
     if args.step <= 0:
         step = args.seq_len

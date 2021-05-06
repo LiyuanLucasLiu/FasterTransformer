@@ -991,7 +991,7 @@ __global__ void transpose_4d_batch_major(T* k_dst, T* v_dst,
                               const int seq_len,
                               const int max_seq_len)
 {
-    const int hidden_dim = head_num * size_per_head;
+    const int hidden_dim = 768; //head_num * size_per_head;
     const int x = (sizeof(T) == 4)? 4 : 8;
     const int size_per_head_split = size_per_head / x;
     const int batch_id = blockIdx.x;

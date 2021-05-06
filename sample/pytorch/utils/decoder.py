@@ -106,7 +106,7 @@ class CustomDecoder(torch.nn.Module):
     def __init__(self, layer_num, head_num, head_size, mem_hidden_dim, weights, is_fp16, path='./lib/libpyt_fastertransformer.so'):
         super().__init__()
         self.layer_num = layer_num
-        self.hidden_dim = head_num * head_size
+        self.hidden_dim = 768 #head_num * head_size
         self.head_num = head_num
         self.head_size = head_size
         self.fp16 = is_fp16
@@ -137,7 +137,7 @@ class ONMTDecoder(torch.nn.Module):
     def __init__(self, layer_num, head_num, head_size, weights):
         super().__init__()
         self.layer_num = layer_num
-        self.hidden_dim = head_num * head_size
+        self.hidden_dim = 768 # head_num * head_size
         self.decoders = torch.nn.ModuleList()
         for i in range(layer_num):
             self.decoders.append(TransformerDecoderLayer(self.hidden_dim, head_num, 4 * self.hidden_dim, 0, 0))

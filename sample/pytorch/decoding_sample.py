@@ -61,7 +61,7 @@ def main():
         head_num = args.head_num
         head_size = args.head_size
         vocab_size = args.vocab_size
-    hidden_dim = head_num * head_size
+    hidden_dim = 768 #head_num * head_size
 
     print("\n=============== Argument ===============")
     print('batch_size: ' + str(args.batch_size))

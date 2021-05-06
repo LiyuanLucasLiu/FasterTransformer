@@ -44,7 +44,7 @@ template <typename T>
 void update_KV_cache_kernel_check(T** key_cache, T** value_cache, const int* beam_ids, const int batch_size, const int beam_width,
   const int head_num, const int size_per_head, const int step, const int cache_size, const int decoder_layers, cudaStream_t stream){
     
-    const int hidden_dim = head_num * size_per_head;
+    const int hidden_dim = 768;
 
     printf("[INFO] decoding update KV cache check for step %d. \n", step);
     const int src_id = step & 0x1;

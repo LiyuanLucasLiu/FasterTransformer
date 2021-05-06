@@ -598,7 +598,7 @@ namespace fastertransformer
 
     if(finished[batch_id * beam_width + beam_id]) return;
 
-    const int hidden_dim = size_per_head * gridDim.y;
+    const int hidden_dim = 768; //size_per_head * gridDim.y;
 
     int src_offset = layer_id * cache_size + 
                       (beam_ids[batch_id * beam_width + beam_id] * hidden_dim + 
@@ -666,7 +666,7 @@ namespace fastertransformer
 
     if (decoder_max_seq_len < 0)
     {
-      int hidden_dim = head_num * size_per_head;
+      int hidden_dim = 768; //head_num * size_per_head;
       dim3 grid(decoder_layers * batch_size * beam_width * step);
       dim3 block(min(1024, hidden_dim));
       block.x = block.x / (4 / sizeof(T));

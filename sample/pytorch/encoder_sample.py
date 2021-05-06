@@ -21,7 +21,7 @@ import torch
 import torch.cuda.nvtx as nvtx
 import time
 
-from utils.encoder import EncoderWeights, CustomEncoder, HuggingFaceEncoder
+from utils.encoder import EncoderWeights, CustomEncoder
 import threading
 
 def sequence_mask(lengths, max_len=None, is_2d=True):
@@ -91,7 +91,7 @@ def main():
         layer_num = args.layer_num
         head_num = args.head_num
         head_size = args.head_size
-    hidden_dim = head_num * head_size
+    hidden_dim = 768 #head_num * head_size
 
     if args.int8_mode == 1:
         per_channel = True
@@ -138,13 +138,6 @@ def main():
     pretrained_weights = torch.load(args.weight_path) if (args.weight_path is not None) else None
     weights = EncoderWeights(layer_num, hidden_dim, pretrained_weights)
 
-    hf_encoder = HuggingFaceEncoder(layer_num, head_num, head_size, weights)
-    hf_encoder.cuda()
-    if args.fp16 or args.int8_mode != 0:
-        hf_encoder.half()
-    hf_encoder.eval()
-    hf_encoder = torch.jit.trace(hf_encoder, (inp, mask))
-
     if args.int8_mode != 0:
         weights.to_int8(per_channel, args.ths_path)
     elif args.fp16:
@@ -163,10 +156,6 @@ def main():
     eff_custom_encoder = torch.jit.script(eff_custom_encoder)
 
     with torch.no_grad():
-        output_mask = sequence_mask(mem_seq_lens, args.seq_len).to(mask.dtype).unsqueeze(-1)
-        hf_output = hf_encoder(inp, mask)[0] * output_mask
-        print(hf_output)
-        print(hf_output.size())
 
         ft_output = custom_encoder(inp, mask, mem_seq_lens)[0] * output_mask
         print(ft_output)
@@ -188,18 +177,6 @@ def main():
 
         if args.time:
             iterations = 100
-
-            for i in range(iterations):
-                output = hf_encoder(inp, mask)
-            t10 = timeit.default_timer()
-            # nvtx.range_push("hf")
-            for i in range(iterations):
-                # nvtx.range_push("hf"+str(i))
-                output = hf_encoder(inp, mask)
-                # nvtx.range_pop()
-            # nvtx.range_pop()
-            t1 = timeit.default_timer() - t10
-            time.sleep(60)
 
             for i in range(iterations):
                 output = custom_encoder(inp, mask, mem_seq_lens)

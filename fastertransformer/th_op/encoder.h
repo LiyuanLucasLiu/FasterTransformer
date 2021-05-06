@@ -52,7 +52,7 @@ public:
   FTEncoder(int head_num, int head_size,
             int int8_mode, int layer_num, int layer_idx, bool allow_gemm_test, bool use_trt_kernel,
             const std::vector<Tensor>& w) : _head_num(head_num), _head_size(head_size), _use_trt_kernel(use_trt_kernel), _weights(w) {
-    int hidden_dim = _head_num * _head_size;
+    int hidden_dim = 768; //_head_num * _head_size;
     check_cuda_error(cublasCreate(&_cublasHandle));
     check_cuda_error(cublasLtCreate(&_cublasltHandle));
     encoder_param.self_attention.query_weight.kernel = get_ptr<T>(_weights[0]);
@@ -102,7 +102,7 @@ public:
     BertEncoderTransformer<EncoderTraits_>* encoder_tmp = new BertEncoderTransformer<EncoderTraits_>(encoder);
     auto stream = at::cuda::getCurrentCUDAStream().stream();
     encoder_param.stream = stream;
-    int hidden_dim = _head_num * _head_size;
+    int hidden_dim = 768; //_head_num * _head_size;
 
     if (removing_padding) {
       encoder_param.sequence_id_offset = get_ptr<int>(sequence_id_offset);

@@ -27,7 +27,7 @@ class EncoderWeights(object):
         """weights need be a state_dict of bert model"""
         self.layer_num = layer_num
         self.int8 = False
-        self.hidden_dim = hidden_dim
+        self.hidden_dim = 768
         self.weights = {}
         if weights is None:
             self._generated_weights = True
@@ -206,7 +206,7 @@ class CustomEncoder(torch.nn.Module):
 class HuggingFaceEncoder(torch.nn.Module):
     def __init__(self, layer_num, head_num, head_size, weights=None):
         super().__init__()
-        hidden_dim = head_num * head_size
+        hidden_dim = 768
         conf = BertConfig(hidden_size=hidden_dim, intermediate_size=4*hidden_dim, num_attention_heads=head_num, num_hidden_layers=layer_num)
         self.encoder = BertEncoder(conf)
         w = {}

@@ -30,7 +30,7 @@ from utils.decoder import get_op_cache_config
 
 class DecodingWeights(object):
     def __init__(self, layer_num, hidden_dim, vocab_size, onmtcheckpoint=None, max_step_for_pe=2048):
-        self.hidden_dim = hidden_dim
+        self.hidden_dim = 768 # hidden_dim
         self.max_step_for_pe = max_step_for_pe
         self.w = []
         if onmtcheckpoint:
@@ -484,7 +484,7 @@ class TransformerDecoder(DecoderBase):
 class CustomDecoding(nn.Module):
     def __init__(self, layer_num, head_num, head_size, vocab_size, start_id, end_id, weights, beam_search_diversity_rate=0.0, args=None):
         super().__init__()
-        hidden_dim = head_num * head_size
+        hidden_dim = 768 # head_num * head_size
         self.end_id = end_id
         self.args = args
         torch.classes.load_library(os.path.abspath(args.ths_path))
@@ -515,7 +515,7 @@ class TorchDecoding(nn.Module):
                  beam_search_diversity_rate=0.0, args=None):
         super().__init__()
         self.layer_num = layer_num
-        self.hidden_dim = head_num * head_size
+        self.hidden_dim = 768 # head_num * head_size
         self.start_id = start_id
         self.end_id = end_id
         self.vocab_size = vocab_size

@@ -1066,7 +1066,7 @@ class OpenMultiHeadAttention: IMultiHeadAttention<OpType_>
 #endif
     param_ = param;
     if (int8_mode_ != 0){
-      int hidden_dim = head_num_ * size_per_head_;
+      int hidden_dim = 768; //head_num_ * size_per_head_;
       query_weight_amax_list = param_.amaxList + ACTIVATION_AMAX_NUM;
       key_weight_amax_list = query_weight_amax_list + hidden_dim;
       value_weight_amax_list = key_weight_amax_list + hidden_dim;

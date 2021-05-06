@@ -42,7 +42,7 @@ class FTDecoder : public IFTDecoder {
 public:
   FTDecoder(int head_num, int head_size, int memory_hidden_dim, const std::vector<Tensor>& w) :
       _head_num(head_num), _head_size(head_size), _memory_hidden_dim(memory_hidden_dim), _weights(w) {
-    int hidden_dim = _head_num * _head_size;
+    int hidden_dim = 768; //_head_num * _head_size;
     check_cuda_error(cublasCreate(&_cublasHandle));
     check_cuda_error(cublasLtCreate(&_cublasLtHandle));
     decoder_params.self_layernorm.gamma = get_ptr<T>(_weights[0]);
