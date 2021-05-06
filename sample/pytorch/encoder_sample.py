@@ -51,6 +51,7 @@ def main():
                         help='head number')
     parser.add_argument('head_size', type=int,
                         help='size per head')
+    parser.add_argument('--size_ratio_to_full', type=int, default=1)
     parser.add_argument('--fp16', action='store_true',
                         help='is fp16')
     parser.add_argument('--int8_mode', type=int, default=0, metavar='NUMBER',
@@ -114,6 +115,7 @@ def main():
     print('test_time: ' + str(args.time))
     print('remove_padding: ' + str(args.remove_padding))
     print('allow_gemm_test: ' + str(args.allow_gemm_test))
+    print('ratio-to-full-bert-base-layer: ' + str(args.size_ratio_to_full))
     print("========================================\n")
 
     inp = torch.empty(batch_size, seq_len, hidden_dim).cuda()
@@ -136,7 +138,7 @@ def main():
         mask = mask.half()
 
     pretrained_weights = torch.load(args.weight_path) if (args.weight_path is not None) else None
-    weights = EncoderWeights(layer_num, hidden_dim, pretrained_weights)
+    weights = EncoderWeights(layer_num, hidden_dim, pretrained_weights, size_ratio_to_full=args.size_ratio_to_full)
 
     if args.int8_mode != 0:
         weights.to_int8(per_channel, args.ths_path)
@@ -156,17 +158,18 @@ def main():
     eff_custom_encoder = torch.jit.script(eff_custom_encoder)
 
     with torch.no_grad():
+        output_mask = sequence_mask(mem_seq_lens, args.seq_len).to(mask.dtype).unsqueeze(-1)
 
         ft_output = custom_encoder(inp, mask, mem_seq_lens)[0] * output_mask
-        print(ft_output)
+        # print(ft_output)
         print(ft_output.size())
 
         eff_ft_output = eff_custom_encoder(inp, mask, mem_seq_lens)[0] * output_mask
-        print(eff_ft_output)
+        # print(eff_ft_output)
         print(eff_ft_output.size())
 
         if args.time:
-            iterations = 100
+            iterations = 1000
 
             for i in range(iterations):
                 output = custom_encoder(inp, mask, mem_seq_lens)
@@ -178,7 +181,7 @@ def main():
                 # nvtx.range_pop()
             # nvtx.range_pop()
             t2 = timeit.default_timer() - t20
-            time.sleep(60)
+            time.sleep(10)
 
             for i in range(iterations):
                 output = eff_custom_encoder(inp, mask, mem_seq_lens)
@@ -190,8 +193,7 @@ def main():
                 # nvtx.range_pop()
             # nvtx.range_pop()
             t3 = timeit.default_timer() - t30
-            time.sleep(60)
-            print("[INFO] HuggingFaceEnocder time costs:    {:.2f} ms".format(t1*1000/iterations))
+            time.sleep(10)
             print("[INFO] FasterTransformer time costs:     {:.2f} ms".format(t2*1000/iterations))
             print("[INFO] EFF-FasterTransformer time costs: {:.2f} ms".format(t3*1000/iterations))
 
