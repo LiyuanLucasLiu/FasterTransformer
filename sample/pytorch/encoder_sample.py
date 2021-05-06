@@ -165,16 +165,6 @@ def main():
         print(eff_ft_output)
         print(eff_ft_output.size())
 
-        diff = torch.abs(hf_output - ft_output)
-        print('FT Mean diff: {}'.format(torch.mean(diff)))
-        print('FT Max diff:  {}'.format(torch.max(diff)))
-        print('FT Min diff:  {}'.format(torch.min(diff)))
-
-        diff = torch.abs(hf_output - eff_ft_output)
-        print('EFF-FT Mean diff: {}'.format(torch.mean(diff)))
-        print('EFF-FT Max diff:  {}'.format(torch.max(diff)))
-        print('EFF-FT Min diff:  {}'.format(torch.min(diff)))
-
         if args.time:
             iterations = 100
 
@@ -216,9 +206,6 @@ def main():
                     output = custom_encoder(inp, mask, mem_seq_lens)
                 t4 = timeit.default_timer() - t40
                 diff = torch.abs(hf_output - ft_output)
-                print('FT Mean diff: {}'.format(torch.mean(diff)))
-                print('FT Max diff:  {}'.format(torch.max(diff)))
-                print('FT Min diff:  {}'.format(torch.min(diff)))
                 print("[INFO] batch_size {} max_seq_len {} {} layer FT-OP-time {:6.2f} ms with {} threads".format(batch_size,
                     seq_len, layer_num, t4, thread_num))
 
