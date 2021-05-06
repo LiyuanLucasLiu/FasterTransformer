@@ -205,7 +205,6 @@ def main():
                 for i in range(iterations):
                     output = custom_encoder(inp, mask, mem_seq_lens)
                 t4 = timeit.default_timer() - t40
-                diff = torch.abs(hf_output - ft_output)
                 print("[INFO] batch_size {} max_seq_len {} {} layer FT-OP-time {:6.2f} ms with {} threads".format(batch_size,
                     seq_len, layer_num, t4, thread_num))
 
