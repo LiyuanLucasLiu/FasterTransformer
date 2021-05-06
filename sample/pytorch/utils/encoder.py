@@ -23,7 +23,7 @@ from .ckpt_quantization import checkpoint_quantization
 
 
 class EncoderWeights(object):
-    def __init__(self, layer_num, hidden_dim, weights=None):
+    def __init__(self, layer_num, hidden_dim, weights=None, size_ratio_to_full=1):
         """weights need be a state_dict of bert model"""
         self.layer_num = layer_num
         self.int8 = False
@@ -33,19 +33,19 @@ class EncoderWeights(object):
             self._generated_weights = True
             for i in range(layer_num):
                 pre = 'bert.encoder.layer.' + str(i) + '.'
-                self.weights[pre + 'attention.self.query.weight'] = torch.zeros(hidden_dim, hidden_dim)
-                self.weights[pre + 'attention.self.query.bias'] = torch.zeros(hidden_dim)
-                self.weights[pre + 'attention.self.key.weight'] = torch.zeros(hidden_dim, hidden_dim)
-                self.weights[pre + 'attention.self.key.bias'] = torch.zeros(hidden_dim)
-                self.weights[pre + 'attention.self.value.weight'] = torch.zeros(hidden_dim, hidden_dim)
-                self.weights[pre + 'attention.self.value.bias'] = torch.zeros(hidden_dim)
-                self.weights[pre + 'attention.output.dense.weight'] = torch.zeros(hidden_dim, hidden_dim)
+                self.weights[pre + 'attention.self.query.weight'] = torch.zeros(hidden_dim / size_ratio_to_full, hidden_dim)
+                self.weights[pre + 'attention.self.query.bias'] = torch.zeros(hidden_dim / size_ratio_to_full)
+                self.weights[pre + 'attention.self.key.weight'] = torch.zeros(hidden_dim / size_ratio_to_full, hidden_dim)
+                self.weights[pre + 'attention.self.key.bias'] = torch.zeros(hidden_dim / size_ratio_to_full)
+                self.weights[pre + 'attention.self.value.weight'] = torch.zeros(hidden_dim / size_ratio_to_full, hidden_dim)
+                self.weights[pre + 'attention.self.value.bias'] = torch.zeros(hidden_dim / size_ratio_to_full)
+                self.weights[pre + 'attention.output.dense.weight'] = torch.zeros(hidden_dim, hidden_dim / size_ratio_to_full)
                 self.weights[pre + 'attention.output.dense.bias'] = torch.zeros(hidden_dim)
                 self.weights[pre + 'attention.output.LayerNorm.weight'] = torch.zeros(hidden_dim)
                 self.weights[pre + 'attention.output.LayerNorm.bias'] = torch.zeros(hidden_dim)
-                self.weights[pre + 'intermediate.dense.weight'] = torch.zeros(4 * hidden_dim, hidden_dim)
-                self.weights[pre + 'intermediate.dense.bias'] = torch.zeros(4 * hidden_dim)
-                self.weights[pre + 'output.dense.weight'] = torch.zeros(hidden_dim, 4 * hidden_dim)
+                self.weights[pre + 'intermediate.dense.weight'] = torch.zeros(4 * hidden_dim / size_ratio_to_full, hidden_dim)
+                self.weights[pre + 'intermediate.dense.bias'] = torch.zeros(4 * hidden_dim / size_ratio_to_full)
+                self.weights[pre + 'output.dense.weight'] = torch.zeros(hidden_dim, 4 * hidden_dim / size_ratio_to_full)
                 self.weights[pre + 'output.dense.bias'] = torch.zeros(hidden_dim)
                 self.weights[pre + 'output.LayerNorm.weight'] = torch.zeros(hidden_dim)
                 self.weights[pre + 'output.LayerNorm.bias'] = torch.zeros(hidden_dim)
